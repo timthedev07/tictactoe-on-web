@@ -1,25 +1,17 @@
 {
   "name": "tictactoe",
-  "version": "1.0.0",
-  "description": "Tictactoe game implemented in a web application built on top of express and react",
-  "main": "app.js",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./bin/www"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/WORK90873/tictactoe-react-express.git"
-  },
-  "author": "harvard90873@gmail.com",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/WORK90873/tictactoe-react-express/issues"
-  },
-  "homepage": "https://github.com/WORK90873/tictactoe-react-express#readme",
   "dependencies": {
-    "express": "^4.17.1",
-    "jade": "^1.11.0",
-    "knex": "^0.95.4",
-    "sqlite3": "^5.0.2"
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1",
+    "spellerjs": "^1.2.0"
   }
 }

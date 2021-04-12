@@ -1,0 +1,32 @@
+{
+  "name": "spellerjs",
+  "version": "1.2.0",
+  "description": "This is a spell checker implemented with hash tables(super fast)",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WORK90873/spellerjs"
+  },
+  "keywords": [
+    "speller",
+    "javascript"
+  ],
+  "author": "harvard90873@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WORK90873/spellerjs/issues"
+  },
+  "homepage": "https://github.com/WORK90873/spellerjs#readme",
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "https": "^1.0.0",
+    "nodemon": "^2.0.7",
+    "spellerjs": "^1.0.0",
+    "url": "^0.11.0"
+  }
+}
