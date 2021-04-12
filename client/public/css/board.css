@@ -1,0 +1,23 @@
+.tttButtons {
+    margin: auto;
+    width: 20vh;
+    height: 20vh;
+    font-size: 4vh;
+    text-align: center;
+}
+
+.tttButtonsContainer {
+    display: inline-block;
+    max-width: 20vh;
+    max-height: 20vh;
+    margin: 1vh;
+    
+}
+
+#board {
+    margin: auto;
+    max-width: 68vh;
+    max-height: 68vh;
+    padding: 1vh;
+    background: rgba(45, 45, 45, 0.4);
+}

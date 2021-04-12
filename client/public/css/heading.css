@@ -1,0 +1,11 @@
+h1#heading {
+    font-weight: bold;
+    color: rgba(139, 255, 255, 0.945);
+    margin-top: 17vh;
+    margin-left: 7vw;
+    background: none;
+}
+
+#head {
+    background: transparent;
+}

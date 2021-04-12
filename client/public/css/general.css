@@ -1,0 +1,17 @@
+body {
+    background: linear-gradient(
+        54deg, 
+        rgba(2,0,36,1) 0%, 
+        rgba(11,11,171,1) 47%, 
+        rgba(14,105,203,1) 60%, 
+        rgba(0,116,213,1) 73%, 
+        rgba(15,136,213,1) 85%, 
+        rgba(12,152,222,1) 89%)
+        no-repeat;
+    background-size: 100vw 100vh;
+
+}
+
+* {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
