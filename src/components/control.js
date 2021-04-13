@@ -40,7 +40,7 @@ export class Control extends Component {
                 <div id="chooseContainer">
                     <h1 id="chooseSubHeading">Choose Player:</h1>
                     <div id="buttonWrapper">
-                        <button className="choose-btn btn btn-info" onClick={() => this.handleClick(X)}>Play as X</button>
+                        <button className="choose-btn btn btn-dark" onClick={() => this.handleClick(X)}>Play as X</button>
                         <button className="choose-btn btn btn-success" onClick={() => this.handleClick(O)}>Play as O</button>
                     </div>
                 </div>

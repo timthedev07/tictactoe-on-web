@@ -1,4 +1,3 @@
-import { set } from 'ramda';
 import {Component, createRef} from 'react';
 import { Control, PA } from './control.js';
 import {initial_state, player, result, terminal, winner, X, O, minimax, EMPTY} from './ttt/logic.js';
@@ -44,7 +43,6 @@ class Grid extends Component {
                     if you render the component with:
                     <Grid name="foo" />
                     then the variable below in the curly braces is going to be `foo`
-
                     but if there is not value provided for 
                     this property then we are going to accept some 
                     default value after `||`
@@ -152,7 +150,7 @@ class Board extends Component {
      * returns the current player
      * @param {*} action 
      */
-    updateBoard = async (action) => {
+    updateBoard = (action) => {
         // retrieve current board from local storage
         let current_board = this.getBoard();
 
@@ -190,7 +188,7 @@ class Board extends Component {
     /**
      * Updates the existing board with the given action
      * returns the current player
-     * @param {*} action 
+     * 
      */
     updateBoardAI = async () => {
         // retrieve current board from local storage
@@ -209,15 +207,21 @@ class Board extends Component {
         window.localStorage.setItem('player', player(resulting_board))
         window.localStorage.setItem('board', JSON.stringify(resulting_board))
 
+        // increment steps
+        window.localStorage.setItem('steps', `${parseInt(window.localStorage.getItem('steps')) + 1}`)
+
+
         // show new message
         this.updateMessage(`Play as ${window.localStorage.getItem('user')}`);
 
         // disable the button
         let child = this.getOrCreateRef(`${action[0]}${action[1]}`);
+        console.log(`processing action ${action[0]}${action[1]}`);
+        console.log('processing grid:')
+        console.log(child.current);
         child.current.updateInnerHTML(curr_player, true);
         this.setState(this.state);
         console.log(this.getBoard())
-        this.renderGrids(this.getBoard());
         
         if (terminal(resulting_board)) {
             let current_winner = winner(resulting_board);
@@ -279,11 +283,10 @@ class Board extends Component {
                 if (board[i][j] === EMPTY) {
                     child.current.enable();
                 } else {
-                    child.current.disable();
                     child.current.updateInnerHTML(board[i][j], true);
                     setTimeout(() => {
 
-                    })
+                    }, 3000)
                 }
                 
             }
@@ -308,7 +311,6 @@ class Board extends Component {
         if (parseInt(window.localStorage.getItem('steps')) > 0) {
             this.renderGrids(this.getBoard());
         }
-        let user = window.localStorage.getItem('user');
         // console.log(
         //     `Current board\n ${JSON.stringify(window.localStorage.getItem('board'))}`
         // )
@@ -341,4 +343,6 @@ class Board extends Component {
         )
     }
 }
+
+
 export default Board;
