@@ -1,4 +1,3 @@
-
 export const X = "X"
 export const O = "O"
 export const EMPTY = null;
@@ -146,6 +145,18 @@ export function minimax(board) {
     if (terminal(board)) {
         return null;
     } 
+    let empty = true;
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board.length; j++) {
+            if (board[i][j] === X || board[i][j] === O) {
+                empty = false;
+            }
+        }
+    }
+    if (empty) {
+        console.log('empty')
+        return actions(board)[Math.floor(Math.random() * 10)];
+    }
     if (curr_player === X) {
         const optimal = max_value(board);
         return optimal.getMove();

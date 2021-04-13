@@ -1,3 +1,4 @@
+import { set } from 'ramda';
 import {Component, createRef} from 'react';
 import { Control, PA } from './control.js';
 import {initial_state, player, result, terminal, winner, X, O, minimax, EMPTY} from './ttt/logic.js';
@@ -64,20 +65,18 @@ class Grid extends Component {
         this.updateInnerHTML(window.localStorage.getItem('player'), true);
     }
 
-    updateInnerHTML = (content, disabled) => {
+    updateInnerHTML = async (content, disabled) => {
         let node = this.myRef.current;
         node.innerHTML = content;
-        node.disabled = disabled;
+        node.setAttribute('disabled', 'true');
     }
 
-    disable() {
+    disable = () => {
         let node = this.myRef.current;
         if (node.innerHTML !== X && node.innerHTML !== O) {
-            console.log(node);
             this.myRef.current.className = 'tttButtons btn btn-secondary'
             this.myRef.current.innerHTML = '';
             this.myRef.current.disabled = true;
-            console.log(node);
         }
     }
 
@@ -107,8 +106,6 @@ class Board extends Component {
         // some variables we are going to keep track of
         this.state = {
             winner: null,
-            message: '',
-            user: null,
         };
         this.references = {};
         this.controlRef = createRef();
@@ -122,6 +119,7 @@ class Board extends Component {
         window.localStorage.setItem('terminal', 'false');
         window.localStorage.setItem('player', player(initial_state()));
         window.localStorage.setItem('steps', '0');
+        window.localStorage.setItem('message', '');
     }
 
     
@@ -131,7 +129,11 @@ class Board extends Component {
         ));
         window.localStorage.setItem('user', user);
         window.localStorage.setItem('terminal', 'false');
+        window.localStorage.setItem('message', '');
         this.setState(this.state);
+        if (user === O) {
+            this.updateBoardAI();
+        }
     }
 
     getOrCreateRef(id) {
@@ -179,6 +181,8 @@ class Board extends Component {
             }
         } else {
             this.updateBoardAI();
+            this.setState(this.state);
+
         }
         
     }
@@ -204,9 +208,16 @@ class Board extends Component {
         // update
         window.localStorage.setItem('player', player(resulting_board))
         window.localStorage.setItem('board', JSON.stringify(resulting_board))
-        this.updateMessage(`Play as ${window.localStorage.getItem('user')}fds`);
+
+        // show new message
+        this.updateMessage(`Play as ${window.localStorage.getItem('user')}`);
+
+        // disable the button
         let child = this.getOrCreateRef(`${action[0]}${action[1]}`);
         child.current.updateInnerHTML(curr_player, true);
+        this.setState(this.state);
+        console.log(this.getBoard())
+        this.renderGrids(this.getBoard());
         
         if (terminal(resulting_board)) {
             let current_winner = winner(resulting_board);
@@ -257,20 +268,22 @@ class Board extends Component {
      * @param {String} message 
      */
     updateMessage = (message) => {
-        this.setState({
-            message: message
-        })
+        window.localStorage.setItem('message', message);
+        this.setState(this.state);
     }
 
     renderGrids = (board) => {
-        console.log(`References: ${(this.references)}`)
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board.length; j++) {
                 let child = this.references[`${i}${j}`];
                 if (board[i][j] === EMPTY) {
                     child.current.enable();
                 } else {
+                    child.current.disable();
                     child.current.updateInnerHTML(board[i][j], true);
+                    setTimeout(() => {
+
+                    })
                 }
                 
             }
@@ -281,11 +294,13 @@ class Board extends Component {
 
     }
 
-    pseudoUpdate = () => {
+    aiFirstMove = () => {
         let steps = parseInt(window.localStorage.getItem('steps'));
-        if (steps === 0 && this.state.user === O) {
+        let user = window.localStorage.getItem('user');
+        if (steps === 0 && user === O) {
             let action = minimax(initial_state());
-            this.updateBoard(action);
+            let resulting_board = result(initial_state(), action)
+            this.renderGrids(resulting_board);
         }
     }
 
@@ -293,13 +308,14 @@ class Board extends Component {
         if (parseInt(window.localStorage.getItem('steps')) > 0) {
             this.renderGrids(this.getBoard());
         }
-        console.log(
-            `Current board\n ${JSON.stringify(window.localStorage.getItem('board'))}`
-        )
+        let user = window.localStorage.getItem('user');
+        // console.log(
+        //     `Current board\n ${JSON.stringify(window.localStorage.getItem('board'))}`
+        // )
         return (
             <div id="tictactoe">
                 <div id="tttmessage-wrapper">
-                    <h3 id="tttmessage">{this.state.message || ''}</h3>
+                    <h3 id="tttmessage">{window.localStorage.getItem('message') || ''}</h3>
                 </div>
                 <div id="panel-wrapper">
 
