@@ -4,14 +4,53 @@
     height: 20vh;
     font-size: 4vh;
     text-align: center;
+    background: transparent;
+    color: rgb(20, 213, 238);
 }
+
+
+
+h3#tttmessage {
+    text-align: center;
+    color: rgb(21, 228, 255);
+    text-align: center;
+    height: 6vh;
+    margin: auto;
+}
+
 
 .tttButtonsContainer {
     display: inline-block;
     max-width: 20vh;
     max-height: 20vh;
+    min-width: 10vh;
+    min-height: 10vh;
     margin: 1vh;
     
+}
+
+#hidden-chooseContainer {
+    visibility: hidden;
+}
+
+
+#chooseSubHeading {
+    color: rgba(243, 255, 72, 0.945);
+    text-align: center;
+}
+
+#buttonWrapper {
+    width: 40vh;
+    margin: auto;
+}
+
+
+.choose-btn {
+    width: 38vh;
+    height: 10vh;
+    margin: 5px;
+    border-radius: 18px;
+    font-size: 3vh;
 }
 
 #board {
@@ -19,5 +58,22 @@
     max-width: 68vh;
     max-height: 68vh;
     padding: 1vh;
-    background: rgba(45, 45, 45, 0.4);
+    background: rgba(45, 45, 45, 0.6);
+    transform: scale(0.9);
+    border: 0px solid;
+    border-radius: 20px;
+}
+
+#panel-wrapper {
+    overflow: hidden;
+}
+
+#choose-container, #board {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#choose-container {
+    margin-left: 12vw;
+    margin-right: 5vw;
 }

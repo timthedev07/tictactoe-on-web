@@ -1,39 +1,326 @@
-import {Component} from 'react';
+import {Component, createRef} from 'react';
+import { Control, PA } from './control.js';
+import {initial_state, player, result, terminal, winner, X, O, minimax, EMPTY} from './ttt/logic.js';
+
+
 class Grid extends Component {
+    constructor(props) {
+        super(props);
+        this.myRef = createRef();
+        
+    }
+
     render() {
+        
+        if (window.localStorage.getItem('user') === null) {
+            return (
+            
+                <div className="tttButtonsContainer" >
+                    
+                    <button ref={this.myRef} disabled className="tttButtons btn btn-secondary" id={this.props.id} onClick={() => this.handleClick(this.props.id)}>
+                        {/* this is used plugging variables into the component.
+                        For example:
+                        if you render the component with:
+                        <Grid name="foo" />
+                        then the variable below in the curly braces is going to be `foo`
+    
+                        but if there is not value provided for 
+                        this property then we are going to accept some 
+                        default value after `||`
+                        */}
+                        {this.props.name || ''}
+                    </button>
+                </div>
+            )
+        }
         return (
             
             <div className="tttButtonsContainer" >
-                    
-                <button className="tttButtons btn btn-warning">
+                
+                <button ref={this.myRef} className="tttButtons btn btn-warning" id={this.props.id} onClick={() => this.handleClick(this.props.id)}>
                     {/* this is used plugging variables into the component.
                     For example:
                     if you render the component with:
                     <Grid name="foo" />
                     then the variable below in the curly braces is going to be `foo`
+
+                    but if there is not value provided for 
+                    this property then we are going to accept some 
+                    default value after `||`
                     */}
-                    {this.props.name}
+                    {this.props.name || ''}
                 </button>
             </div>
         )
     }
+
+    /* here we define handle click to be
+    a function that handles the event when element inside of 
+    this component gets clicked */
+    handleClick = (id) => {
+        // construct an array representing the action taken by the user
+        let action = [parseInt(id.charAt(0)), parseInt(id.charAt(1))];
+        this.props.handler(action);
+        this.updateInnerHTML(window.localStorage.getItem('player'), true);
+    }
+
+    updateInnerHTML = (content, disabled) => {
+        let node = this.myRef.current;
+        node.innerHTML = content;
+        node.disabled = disabled;
+    }
+
+    disable() {
+        let node = this.myRef.current;
+        if (node.innerHTML !== X && node.innerHTML !== O) {
+            console.log(node);
+            this.myRef.current.className = 'tttButtons btn btn-secondary'
+            this.myRef.current.innerHTML = '';
+            this.myRef.current.disabled = true;
+            console.log(node);
+        }
+    }
+
+    /**
+     * Sets disabled to false and innerhtml to empty string
+     */
+    enable() {
+        let node = this.myRef.current;
+        node.innerHTML = '';
+        node.disabled = false;
+        node.className = 'tttButtons btn btn-warning';
+        
+    }
+
 }
 
 class Board extends Component {
+
+    /**
+     * Initializing a complete implementation of a tic tac toe board
+     * @param {*} props 
+     */
+    constructor(props) {
+        // inheriting from the original React's constructor
+        super(props);
+
+        // some variables we are going to keep track of
+        this.state = {
+            winner: null,
+            message: '',
+            user: null,
+        };
+        this.references = {};
+        this.controlRef = createRef();
+        
+        window.localStorage.clear();
+
+        // store the variables in the local storage
+        window.localStorage.setItem('board', JSON.stringify(
+            initial_state()
+        ));
+        window.localStorage.setItem('terminal', 'false');
+        window.localStorage.setItem('player', player(initial_state()));
+        window.localStorage.setItem('steps', '0');
+    }
+
+    
+    setUser = (user) => {
+        window.localStorage.setItem('board', JSON.stringify(
+            initial_state()
+        ));
+        window.localStorage.setItem('user', user);
+        window.localStorage.setItem('terminal', 'false');
+        this.setState(this.state);
+    }
+
+    getOrCreateRef(id) {
+        if (!this.references.hasOwnProperty(id)) {
+            this.references[id] = createRef();
+        }
+        return this.references[id];
+    }
+
+    getBoard = () => {
+        return JSON.parse(window.localStorage.getItem('board'));
+    }
+
+    /**
+     * Updates the existing board with the given action
+     * returns the current player
+     * @param {*} action 
+     */
+    updateBoard = async (action) => {
+        // retrieve current board from local storage
+        let current_board = this.getBoard();
+
+        // get resulting board based user move
+        let resulting_board = result(current_board, action);
+
+        // get current player
+        let curr_player = player(current_board);
+        window.localStorage.setItem('prevPlayer', curr_player);
+
+        // update
+        window.localStorage.setItem('player', player(resulting_board))
+        window.localStorage.setItem('board', JSON.stringify(resulting_board))
+        
+        // increment steps
+        window.localStorage.setItem('steps', `${parseInt(window.localStorage.getItem('steps')) + 1}`)
+
+        if (terminal(resulting_board)) {
+            let current_winner = winner(resulting_board);
+            this.controlRef.current.updateMode(PA);
+            window.localStorage.setItem('terminal', 'true');
+            if (current_winner !== null) {
+                this.updateMessage(`Game over, ${current_winner} wins`);
+            } else {
+                this.updateMessage(`Game over, tie`);
+            }
+        } else {
+            this.updateBoardAI();
+        }
+        
+    }
+
+    /**
+     * Updates the existing board with the given action
+     * returns the current player
+     * @param {*} action 
+     */
+    updateBoardAI = async () => {
+        // retrieve current board from local storage
+        let current_board = this.getBoard();
+        
+        let action = minimax(current_board);
+
+        // get resulting board
+        let resulting_board = result(current_board, action);
+
+        // get current player
+        let curr_player = player(current_board);
+        window.localStorage.setItem('prevPlayer', curr_player);
+
+        // update
+        window.localStorage.setItem('player', player(resulting_board))
+        window.localStorage.setItem('board', JSON.stringify(resulting_board))
+        this.updateMessage(`Play as ${window.localStorage.getItem('user')}fds`);
+        let child = this.getOrCreateRef(`${action[0]}${action[1]}`);
+        child.current.updateInnerHTML(curr_player, true);
+        
+        if (terminal(resulting_board)) {
+            let current_winner = winner(resulting_board);
+            window.localStorage.setItem('terminal', 'true');
+            this.controlRef.current.updateMode(PA);
+            if (current_winner !== null) {
+                this.updateMessage(`Game over, ${current_winner} wins`);
+            } else {
+                this.updateMessage(`Game over, tie`);
+            }
+        }
+    }
+
+    disableBoard(board) {
+        // get empty grids
+        let empty_ids = []
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board.length; j++) {
+                if (board[i][j] === EMPTY) {
+                    empty_ids.push(`${i}${j}`);
+                } 
+            }
+        }
+        for (var i = 0; i < empty_ids.length; i++) {
+            let child = this.getOrCreateRef(empty_ids[i]);
+            child.current.disable();
+        }
+    }
+
+    enableBoard(board) {
+        // get empty grids
+        let empty_ids = []
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board.length; j++) {
+                if (board[i][j] === EMPTY) {
+                    empty_ids.push(`${i}${j}`);
+                } 
+            }
+        }
+        for (var i = 0; i < empty_ids.length; i++) {
+            let child = this.getOrCreateRef(empty_ids[i]);
+            child.current.enable();
+        }
+    }
+
+    /**
+     * Updates the message displayed on top of the board
+     * @param {String} message 
+     */
+    updateMessage = (message) => {
+        this.setState({
+            message: message
+        })
+    }
+
+    renderGrids = (board) => {
+        console.log(`References: ${(this.references)}`)
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board.length; j++) {
+                let child = this.references[`${i}${j}`];
+                if (board[i][j] === EMPTY) {
+                    child.current.enable();
+                } else {
+                    child.current.updateInnerHTML(board[i][j], true);
+                }
+                
+            }
+        }
+        if (window.localStorage.getItem('terminal') === 'true') {
+            this.disableBoard(board);
+        }
+
+    }
+
+    pseudoUpdate = () => {
+        let steps = parseInt(window.localStorage.getItem('steps'));
+        if (steps === 0 && this.state.user === O) {
+            let action = minimax(initial_state());
+            this.updateBoard(action);
+        }
+    }
+
     render() {
+        if (parseInt(window.localStorage.getItem('steps')) > 0) {
+            this.renderGrids(this.getBoard());
+        }
+        console.log(
+            `Current board\n ${JSON.stringify(window.localStorage.getItem('board'))}`
+        )
         return (
-            <div id="board">
-                <Grid name="empty" />
-                <Grid name="empty" />
-                <Grid name="empty" />
+            <div id="tictactoe">
+                <div id="tttmessage-wrapper">
+                    <h3 id="tttmessage">{this.state.message || ''}</h3>
+                </div>
+                <div id="panel-wrapper">
 
-                <Grid name="empty" />
-                <Grid name="empty" />
-                <Grid name="empty" />
+                    <div id="choose-container">
+                        <Control ref={this.controlRef} handler={this.setUser} mode="choose"/>
+                    </div>
+                    <div id="board" key="unique">
+                        <Grid ref={this.getOrCreateRef("00")} id="00" handler={this.updateBoard} getter={this.getBoard} />
+                        <Grid ref={this.getOrCreateRef("01")} id="01" handler={this.updateBoard} getter={this.getBoard} />
+                        <Grid ref={this.getOrCreateRef("02")} id="02" handler={this.updateBoard} getter={this.getBoard} />
 
-                <Grid name="empty" />
-                <Grid name="empty" />
-                <Grid name="empty" />
+                        <Grid ref={this.getOrCreateRef("10")} id="10" handler={this.updateBoard} getter={this.getBoard} />
+                        <Grid ref={this.getOrCreateRef("11")} id="11" handler={this.updateBoard} getter={this.getBoard} />
+                        <Grid ref={this.getOrCreateRef("12")} id="12" handler={this.updateBoard} getter={this.getBoard} />
+
+                        <Grid ref={this.getOrCreateRef("20")} id="20" handler={this.updateBoard} getter={this.getBoard} />
+                        <Grid ref={this.getOrCreateRef("21")} id="21" handler={this.updateBoard} getter={this.getBoard} />
+                        <Grid ref={this.getOrCreateRef("22")} id="22" handler={this.updateBoard} getter={this.getBoard} />
+                    </div>
+                </div>
+                
             </div>
         )
     }
