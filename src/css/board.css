@@ -1,14 +1,19 @@
 .tttButtons {
     margin: auto;
-    width: 20vh;
-    height: 20vh;
+    width: 130px;
+    height: 130px;
     font-size: 4vh;
     text-align: center;
     background: transparent;
     color: rgb(20, 213, 238);
 }
 
-
+@media screen and (max-width: 350px) {
+    .tttButtons {
+        width: 100px;
+        height: 100px;
+    }
+}
 
 h3#tttmessage {
     text-align: center;
@@ -18,21 +23,18 @@ h3#tttmessage {
     margin: auto;
 }
 
-
 .tttButtonsContainer {
     display: inline-block;
-    max-width: 20vh;
-    max-height: 20vh;
-    min-width: 10vh;
-    min-height: 10vh;
-    margin: 1vh;
-    
+    max-width: 130px;
+    max-height: 130px;
+    min-width: 130px;
+    min-height: 130px;
+    margin: 6px;
 }
 
 #hidden-chooseContainer {
     visibility: hidden;
 }
-
 
 #chooseSubHeading {
     color: rgba(243, 255, 72, 0.945);
@@ -44,7 +46,6 @@ h3#tttmessage {
     margin: auto;
 }
 
-
 .choose-btn {
     width: 38vh;
     height: 10vh;
@@ -55,8 +56,8 @@ h3#tttmessage {
 
 #board {
     margin: auto;
-    max-width: 68vh;
-    max-height: 68vh;
+    width: 442px;
+    height: 442px;
     padding: 1vh;
     background: rgba(45, 45, 45, 0.6);
     transform: scale(0.9);
@@ -64,11 +65,50 @@ h3#tttmessage {
     border-radius: 20px;
 }
 
+/* changing the board size on smaller screens */
+@media screen and (max-width: 427px) {
+    .tttButtons {
+        width: 100px;
+        height: 100px;
+    }
+    .tttButtonsContainer {
+        max-width: 100px;
+        max-height: 100px;
+        min-width: 100px;
+        min-height: 100px;
+        margin: 6px;
+    }
+    #board {
+        width: 350px;
+        height: 350px;
+    }
+}
+
+/* changing the board size on much smaller screens */
+@media screen and (max-width: 340px) {
+    .tttButtons {
+        width: 70px;
+        height: 70px;
+    }
+    .tttButtonsContainer {
+        max-width: 70px;
+        max-height: 70px;
+        min-width: 70px;
+        min-height: 70px;
+        margin: 5px;
+    }
+    #board {
+        width: 250px;
+        height: 250px;
+    }
+}
+
 #panel-wrapper {
     overflow: hidden;
 }
 
-#choose-container, #board {
+#choose-container,
+#board {
     display: inline-block;
     vertical-align: top;
 }

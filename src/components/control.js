@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import { Component } from 'react';
 import { O, X } from './ttt/logic';
 
 export const PA = 'playAgain';
@@ -28,7 +28,6 @@ export class Control extends Component {
             if (this.state.hidden) {
                 return (
                     <div id="hidden-chooseContainer">
-                        <h1 id="chooseSubHeading"></h1>
                         <div id="buttonWrapper">
                             <button className="choose-btn btn btn-info" onClick={() => this.handleClick(X)}>Play as X</button>
                             <button className="choose-btn btn btn-success" onClick={() => this.handleClick(O)}>Play as O</button>
@@ -36,7 +35,7 @@ export class Control extends Component {
                     </div>
                 )
             }
-            return(
+            return (
                 <div id="chooseContainer">
                     <h1 id="chooseSubHeading">Choose Player:</h1>
                     <div id="buttonWrapper">
@@ -56,8 +55,8 @@ export class Control extends Component {
             )
         }
 
-    }  
-    handleClick = (c=null) => {
+    }
+    handleClick = (c = null) => {
         // hide the panel
         this.setState({
             hidden: true
